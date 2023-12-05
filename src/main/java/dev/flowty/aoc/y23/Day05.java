@@ -1,10 +1,12 @@
 package dev.flowty.aoc.y23;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toCollection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +15,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 public class Day05 {
 
@@ -21,6 +24,14 @@ public class Day05 {
 				.process( "seed" )
 				.min()
 				.orElseThrow( () -> new IllegalStateException( "no outputs!" ) );
+	}
+
+	static long part2( String[] lines ) {
+		return new Pipeline( lines )
+				.processRanges( "seed" )
+				.sorted()
+				.findFirst()
+				.orElseThrow( () -> new IllegalStateException( "no outputs!" ) ).min;
 	}
 
 	private static class Pipeline {
@@ -37,7 +48,7 @@ public class Day05 {
 					continue;
 				}
 
-				Range r = Range.offer( line );
+				MappedRange r = MappedRange.offer( line );
 				if( r != null ) {
 					active.ranges.add( r );
 					continue;
@@ -53,13 +64,35 @@ public class Day05 {
 		LongStream process( String inputs ) {
 			return sources.stream()
 					.filter( s -> inputs.equals( s.name ) )
-					.flatMapToLong( s -> LongStream.of( s.ids ) )
+					.flatMapToLong( Source::ids )
 					.map( in -> process( inputs, in ) );
+		}
+
+		Stream<Range> processRanges( String inputs ) {
+			return sources.stream()
+					.filter( s -> inputs.equals( s.name ) )
+					.flatMap( Source::ranges )
+					.map( in -> process( inputs, in ) )
+					.flatMap( Set::stream );
 		}
 
 		long process( String type, long value ) {
 			String currentType = type;
 			long currentValue = value;
+
+			while( mappings.containsKey( currentType ) ) {
+				Mapping m = mappings.get( currentType );
+				currentType = m.to;
+				currentValue = m.map( currentValue );
+			}
+
+			return currentValue;
+		}
+
+		Set<Range> process( String type, Range value ) {
+			String currentType = type;
+			TreeSet<Range> currentValue = Stream.of( value )
+					.collect( toCollection( TreeSet::new ) );
 
 			while( mappings.containsKey( currentType ) ) {
 				Mapping m = mappings.get( currentType );
@@ -99,6 +132,18 @@ public class Day05 {
 			return new Source( m.group( 1 ), m.group( 2 ).split( " " ) );
 		}
 
+		public LongStream ids() {
+			return LongStream.of( ids );
+		}
+
+		public Stream<Range> ranges() {
+			List<Range> ls = new ArrayList<>();
+			for( int i = 0; i < ids.length; i += 2 ) {
+				ls.add( new Range( ids[i], ids[i] + ids[i + 1] ) );
+			}
+			return ls.stream();
+		}
+
 		@Override
 		public String toString() {
 			return name + "[s] " + Arrays.toString( ids );
@@ -108,7 +153,7 @@ public class Day05 {
 	private static class Mapping {
 		final String from;
 		final String to;
-		final Set<Range> ranges = new TreeSet<>( Comparator.comparing( r -> r.fromStart ) );
+		final Set<MappedRange> ranges = new TreeSet<>( Comparator.comparing( r -> r.fromStart ) );
 
 		private Mapping( String from, String to ) {
 			this.from = from;
@@ -124,12 +169,46 @@ public class Day05 {
 		}
 
 		long map( long in ) {
-			for( Range range : ranges ) {
+			for( MappedRange range : ranges ) {
 				if( range.includes( in ) ) {
 					return range.map( in );
 				}
 			}
 			return in;
+		}
+
+		TreeSet<Range> map( TreeSet<Range> in ) {
+
+			// split the input range so they exactly fit (or don't) the mapped ranges
+			TreeSet<Range> split = new TreeSet<>( in );
+			for( MappedRange mr : ranges ) {
+				TreeSet<Range> s = new TreeSet<>();
+				for( Range range : split ) {
+					s.addAll( mr.splitOnInput( range ) );
+				}
+				split = s;
+			}
+
+			// now map those ranges
+			TreeSet<Range> mapped = new TreeSet<>();
+
+			for( Range range : split ) {
+				Range tx = null;
+				for( MappedRange mr : ranges ) {
+					if( mr.includes( range ) ) {
+						assert tx == null;
+						tx = mr.map( range );
+					}
+				}
+
+				if( tx == null ) {
+					tx = range;
+				}
+
+				mapped.add( tx );
+			}
+
+			return Range.consolidate( mapped );
 		}
 
 		@Override
@@ -140,23 +219,23 @@ public class Day05 {
 		}
 	}
 
-	private static class Range {
+	static class MappedRange {
 		final long fromStart;
 		final long toStart;
 		final long size;
 
-		private Range( long fromStart, long toStart, long size ) {
+		MappedRange( long fromStart, long toStart, long size ) {
 			this.fromStart = fromStart;
 			this.toStart = toStart;
 			this.size = size;
 		}
 
-		static Range offer( String line ) {
+		static MappedRange offer( String line ) {
 			Matcher m = Pattern.compile( "(\\d+) (\\d+) (\\d+)" ).matcher( line );
 			if( !m.matches() ) {
 				return null;
 			}
-			return new Range(
+			return new MappedRange(
 					Long.parseLong( m.group( 2 ) ),
 					Long.parseLong( m.group( 1 ) ),
 					Long.parseLong( m.group( 3 ) ) );
@@ -166,13 +245,121 @@ public class Day05 {
 			return fromStart <= in && in < fromStart + size;
 		}
 
+		boolean includes( Range r ) {
+			return fromStart <= r.min && r.max < fromStart + size;
+		}
+
 		long map( long in ) {
 			return in - fromStart + toStart;
+		}
+
+		Range map( Range in ) {
+			return new Range( map( in.min ), map( in.max ) );
+		}
+
+		Set<Range> splitOnInput( Range r ) {
+			Set<Range> out = new TreeSet<>();
+
+			if( r.max < fromStart || r.min >= fromStart + size ) {
+				// no intersection
+				out.add( r );
+			}
+			else if( fromStart <= r.min && r.max < fromStart + size ) {
+				// range is encompassed
+				out.add( new Range( r.min, r.max ) );
+			}
+			else if( r.min < fromStart && fromStart + size - 1 < r.max ) {
+				// range encompasses
+				out.add( new Range( r.min, fromStart - 1 ) );
+				out.add( new Range( fromStart, fromStart + size - 1 ) );
+				out.add( new Range( fromStart + size, r.max ) );
+			}
+			else if( r.min < fromStart && r.max < fromStart + size ) {
+				// intersection lower
+				out.add( new Range( r.min, fromStart - 1 ) );
+				out.add( new Range( fromStart, r.max ) );
+			}
+			else if( fromStart <= r.min && fromStart + size - 1 < r.max ) {
+				// intersection upper
+				out.add( new Range( r.min, fromStart + size - 1 ) );
+				out.add( new Range( fromStart + size, r.max ) );
+			}
+			else {
+				throw new IllegalStateException( "unhandled! " + r + " on " + toString() );
+			}
+
+			return out;
 		}
 
 		@Override
 		public String toString() {
 			return fromStart + " " + toStart + " " + size;
+		}
+	}
+
+	static class Range implements Comparable<Range> {
+		final long min;
+		final long max;
+
+		Range( long min, long max ) {
+			this.min = min;
+			this.max = max;
+		}
+
+		Range encompass( Range r ) {
+			return new Range( Math.min( min, r.min ), Math.max( max, r.max ) );
+		}
+
+		boolean intersects( Range r ) {
+			return !(min > r.max || max < r.min);
+		}
+
+		static TreeSet<Range> consolidate( TreeSet<Range> ranges ) {
+			TreeSet<Range> consolidated = new TreeSet<>();
+
+			Iterator<Range> i = ranges.iterator();
+			Range r = i.next();
+			while( i.hasNext() ) {
+				Range s = i.next();
+				if( r.intersects( s ) || r.max == s.min - 1 || r.min == s.max + 1 ) {
+					r = r.encompass( s );
+				}
+				else {
+					consolidated.add( r );
+					r = s;
+				}
+			}
+			consolidated.add( r );
+
+			return consolidated;
+		}
+
+		@Override
+		public int compareTo( Range o ) {
+			long d = min - o.min;
+			if( d == 0 ) {
+				d = max - o.max;
+			}
+			return Long.signum( d );
+		}
+
+		@Override
+		public boolean equals( Object obj ) {
+			if( obj instanceof Range ) {
+				Range r = (Range) obj;
+				return compareTo( r ) == 0;
+			}
+			return false;
+		}
+
+		@Override
+		public String toString() {
+			return "[" + min + "-" + max + "]";
+		}
+
+		@Override
+		public int hashCode() {
+			return toString().hashCode();
 		}
 	}
 }
