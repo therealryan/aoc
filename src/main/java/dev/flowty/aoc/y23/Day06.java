@@ -44,7 +44,7 @@ class Day06 {
 			StringBuilder dist = new StringBuilder();
 			for( Race race : races ) {
 				time.append( race.time );
-				dist.append( race.distance );
+				dist.append( race.record );
 			}
 
 			return new Race(
@@ -62,34 +62,60 @@ class Day06 {
 
 	private static class Race {
 		final long time;
-		final long distance;
+		final long record;
 
 		Race( long time, long distance ) {
 			this.time = time;
-			this.distance = distance;
+			this.record = distance;
 		}
 
-		long[] distances() {
-			long[] distances = new long[(int) time];
-			for( int i = 0; i < distances.length; i++ ) {
-				distances[i] = (time - i) * i;
-			}
-			return distances;
+		long distance( long t ) {
+			return (time - t) * t;
 		}
 
 		int waysToWin() {
-			int ways = 0;
-			for( long d : distances() ) {
-				if( d > distance ) {
-					ways++;
+			long lowest = shortestWin();
+			long highest = highestWin();
+			return (int) (highest - lowest) + 1;
+		}
+
+		long shortestWin() {
+			long low = 0;
+			long high = time / 2;
+
+			while( high - low > 1 ) {
+				long mid = low + (high - low) / 2;
+				if( distance( mid ) <= record ) {
+					low = mid;
+				}
+				else {
+					high = mid;
 				}
 			}
-			return ways;
+
+			return high;
+		}
+
+		long highestWin() {
+			long low = time / 2;
+			long high = time;
+
+			while( high - low > 1 ) {
+				long mid = low + (high - low) / 2;
+				if( distance( mid ) > record ) {
+					low = mid;
+				}
+				else {
+					high = mid;
+				}
+			}
+
+			return low;
 		}
 
 		@Override
 		public String toString() {
-			return String.format( "t=%s d=%s", time, distance );
+			return String.format( "t=%s d=%s", time, record );
 		}
 	}
 }
