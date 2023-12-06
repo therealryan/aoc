@@ -9,7 +9,8 @@ import java.util.stream.IntStream;
 class Day06 {
 
 	static int part1( String[] lines ) {
-		return new Races( lines ).waysToWin()
+		return new Races( lines )
+				.waysToWin()
 				.reduce( 1, ( a, b ) -> a * b );
 	}
 
@@ -66,7 +67,7 @@ class Day06 {
 
 		Race( long time, long distance ) {
 			this.time = time;
-			this.record = distance;
+			record = distance;
 		}
 
 		long distance( long t ) {
@@ -74,8 +75,9 @@ class Day06 {
 		}
 
 		int waysToWin() {
+			// these assume that the time midpoint will definitely produce a win
 			long lowest = shortestWin();
-			long highest = highestWin();
+			long highest = longestWin();
 			return (int) (highest - lowest) + 1;
 		}
 
@@ -96,7 +98,7 @@ class Day06 {
 			return high;
 		}
 
-		long highestWin() {
+		long longestWin() {
 			long low = time / 2;
 			long high = time;
 
