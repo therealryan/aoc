@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
 import dev.flowty.aoc.y23.Day07.Hand;
+import dev.flowty.aoc.y23.Day07.StdDeck;
+import dev.flowty.aoc.y23.Day07.StdType;
 
 class Day07Test {
 
@@ -41,13 +43,15 @@ class Day07Test {
 
 	@Test
 	void part2() {
-		assertEquals( 0, Day07.part2( DATA ) );
+		assertEquals( 250825971, Day07.part2( DATA ) );
 	}
 
 	@Test
 	void order() {
 		BiConsumer<String, String> test = ( in, out ) -> {
-			List<Hand> hands = Stream.of( in.split( "\n" ) ).map( Hand::new ).collect( toList() );
+			List<Hand> hands = Stream.of( in.split( "\n" ) )
+					.map( line -> new Hand( line, StdDeck.values(), StdType.values() ) )
+					.collect( toList() );
 			Collections.sort( hands );
 			assertEquals( out, hands.stream().map( Hand::toString ).collect( joining( "\n" ) ),
 					"for " + in );
