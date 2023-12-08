@@ -24,6 +24,18 @@ class Day08Test {
 			+ "BBB = (AAA, ZZZ)\n"
 			+ "ZZZ = (ZZZ, ZZZ)" );
 
+	private static final String[] TEST_DATA_3 = Input.linesOf( ""
+			+ "LR\n"
+			+ "\n"
+			+ "11A = (11B, XXX)\n"
+			+ "11B = (XXX, 11Z)\n"
+			+ "11Z = (11B, XXX)\n"
+			+ "22A = (22B, XXX)\n"
+			+ "22B = (22C, 22C)\n"
+			+ "22C = (22Z, 22Z)\n"
+			+ "22Z = (22B, 22B)\n"
+			+ "XXX = (XXX, XXX)" );
+
 	private static final String[] DATA = Input.linesFrom( "input_08.txt" );
 
 	@Test
@@ -39,8 +51,7 @@ class Day08Test {
 
 	@Test
 	void part2Test() {
-		assertEquals( 0, Day08.part2( TEST_DATA_1 ) );
-		assertEquals( 0, Day08.part2( TEST_DATA_2 ) );
+		assertEquals( 6, Day08.part2( TEST_DATA_3 ) );
 	}
 
 	@Test

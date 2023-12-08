@@ -1,20 +1,27 @@
 package dev.flowty.aoc.y23;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Day08 {
 
 	static int part1( String[] lines ) {
-		return new Maps( lines ).stepsBetween( "AAA", "ZZZ" );
+		return new Maps( lines ).stepsBetween(
+				n -> "AAA".equals( n.name ),
+				n -> "ZZZ".equals( n.name ) );
 	}
 
 	static int part2( String[] lines ) {
-		return 0;
+		return new Maps( lines ).stepsBetween(
+				n -> n.name.endsWith( "A" ),
+				n -> n.name.endsWith( "Z" ) );
 	}
 
 	static class Maps {
@@ -24,7 +31,7 @@ public class Day08 {
 		Maps( String[] lines ) {
 			directions = lines[0];
 
-			Pattern p = Pattern.compile( "([A-Z]{3}) = \\(([A-Z]{3}). ([A-Z]{3})\\)" );
+			Pattern p = Pattern.compile( "(.{3}) = \\((.{3}). (.{3})\\)" );
 			for( int i = 2; i < lines.length; i++ ) {
 				Matcher m = p.matcher( lines[i] );
 				if( !m.matches() ) {
@@ -51,15 +58,19 @@ public class Day08 {
 			}
 		}
 
-		int stepsBetween( String start, String end ) {
+		int stepsBetween( Predicate<Node> start, Predicate<Node> end ) {
 			int steps = 0;
 			int dirIndex = 0;
 
-			Node current = nodes.get( start );
-			Node dest = nodes.get( end );
+			Set<Node> current = nodes.values().stream()
+					.filter( start )
+					.collect( toSet() );
 
-			while( current != dest ) {
-				current = current.move( directions.charAt( dirIndex ) );
+			while( !current.stream().allMatch( end ) ) {
+				char move = directions.charAt( dirIndex );
+				current = current.stream()
+						.map( n -> n.move( move ) )
+						.collect( toSet() );
 				steps++;
 				dirIndex = (dirIndex + 1) % directions.length();
 			}
