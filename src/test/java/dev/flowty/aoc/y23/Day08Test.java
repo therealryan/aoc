@@ -56,7 +56,7 @@ class Day08Test {
 
 	@Test
 	void part2() {
-		assertEquals( 0, Day08.part2( DATA ) );
+		assertEquals( 10371555451871L, Day08.part2( DATA ) );
 	}
 
 }
