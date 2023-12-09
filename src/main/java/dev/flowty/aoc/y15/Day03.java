@@ -10,15 +10,22 @@ import java.util.stream.Stream;
 public class Day03 {
 
 	static int part1( String line ) {
-		return new Santa().moves( line ).visits.size();
+		return visited( 1, line );
 	}
 
 	static int part2( String line ) {
+		return visited( 2, line );
+	}
 
-		Santa[] santas = { new Santa(), new Santa() };
+	static int visited( int santaCount, String moves ) {
 
-		for( int i = 0; i < line.length(); i++ ) {
-			santas[i % santas.length].move( line.charAt( i ) );
+		Santa[] santas = new Santa[santaCount];
+		for( int i = 0; i < santas.length; i++ ) {
+			santas[i] = new Santa();
+		}
+
+		for( int i = 0; i < moves.length(); i++ ) {
+			santas[i % santas.length].move( moves.charAt( i ) );
 		}
 
 		return Stream.of( santas )
@@ -36,13 +43,6 @@ public class Day03 {
 
 		Santa() {
 			visits.compute( x + "," + y, ( k, v ) -> v == null ? 1 : v + 1 );
-		}
-
-		Santa moves( String dirs ) {
-			for( int i = 0; i < dirs.length(); i++ ) {
-				move( dirs.charAt( i ) );
-			}
-			return this;
 		}
 
 		Santa move( char dir ) {
