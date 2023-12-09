@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
+import dev.flowty.aoc.Input;
 import dev.flowty.aoc.y23.Day05.MappedRange;
 import dev.flowty.aoc.y23.Day05.Range;
 
@@ -51,7 +52,7 @@ class Day05Test {
 			+ "60 56 37\n"
 			+ "56 93 4" );
 
-	private static final String[] DATA = Input.linesFrom( "input_05.txt" );
+	private static final String[] DATA = Input.linesFrom( "y23", "input_05.txt" );
 
 	@Test
 	void part1Test() {

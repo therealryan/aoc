@@ -1,4 +1,4 @@
-package dev.flowty.aoc.y23;
+package dev.flowty.aoc;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -13,13 +13,14 @@ public class Input {
 		return data.split( "\n" );
 	}
 
-	public static String[] linesFrom( String name ) {
+	public static String[] linesFrom( String year, String name ) {
 		try {
 			return linesOf( new String(
-					Files.readAllBytes( Paths.get( "src/test/resources/y23", name ) ), UTF_8 ) );
+					Files.readAllBytes( Paths.get( "src/test/resources", year, name ) ), UTF_8 ) );
 		}
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );
 		}
 	}
+
 }

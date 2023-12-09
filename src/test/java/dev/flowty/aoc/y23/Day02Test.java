@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import dev.flowty.aoc.Input;
 import dev.flowty.aoc.y23.Day02;
 
 class Day02Test {
@@ -15,7 +16,7 @@ class Day02Test {
 			+ "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red\n"
 			+ "Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green" );
 
-	private static final String[] DATA = Input.linesFrom( "input_02.txt" );
+	private static final String[] DATA = Input.linesFrom( "y23", "input_02.txt" );
 
 	@Test
 	void part1Test() {

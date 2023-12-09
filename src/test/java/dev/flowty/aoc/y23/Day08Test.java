@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import dev.flowty.aoc.Input;
+
 class Day08Test {
 
 	private static final String[] TEST_DATA_1 = Input.linesOf( ""
@@ -36,7 +38,7 @@ class Day08Test {
 			+ "22Z = (22B, 22B)\n"
 			+ "XXX = (XXX, XXX)" );
 
-	private static final String[] DATA = Input.linesFrom( "input_08.txt" );
+	private static final String[] DATA = Input.linesFrom( "y23", "input_08.txt" );
 
 	@Test
 	void part1Test() {

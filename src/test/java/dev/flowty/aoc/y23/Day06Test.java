@@ -4,13 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import dev.flowty.aoc.Input;
+
 class Day06Test {
 
 	private static final String[] TEST_DATA = Input.linesOf( ""
 			+ "Time:      7  15   30\n"
 			+ "Distance:  9  40  200" );
 
-	private static final String[] DATA = Input.linesFrom( "input_06.txt" );
+	private static final String[] DATA = Input.linesFrom( "y23", "input_06.txt" );
 
 	@Test
 	void part1Test() {

@@ -4,11 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import dev.flowty.aoc.Input;
 import dev.flowty.aoc.y23.Day01;
 
 class Day01Test {
 
-	private static final String[] DATA = Input.linesFrom( "input_01.txt" );
+	private static final String[] DATA = Input.linesFrom( "y23", "input_01.txt" );
 
 	@Test
 	void part1Test() {

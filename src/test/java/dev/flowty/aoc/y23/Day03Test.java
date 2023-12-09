@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import dev.flowty.aoc.Input;
 import dev.flowty.aoc.y23.Day03;
 
 class Day03Test {
@@ -20,7 +21,7 @@ class Day03Test {
 			+ "...$.*....\n"
 			+ ".664.598.." );
 
-	private static final String[] DATA = Input.linesFrom( "input_03.txt" );
+	private static final String[] DATA = Input.linesFrom( "y23", "input_03.txt" );
 
 	@Test
 	void part1Test() {

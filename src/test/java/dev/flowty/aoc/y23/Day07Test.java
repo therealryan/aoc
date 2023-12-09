@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
+import dev.flowty.aoc.Input;
 import dev.flowty.aoc.y23.Day07.Hand;
 import dev.flowty.aoc.y23.Day07.StdDeck;
 import dev.flowty.aoc.y23.Day07.StdType;
@@ -24,7 +25,7 @@ class Day07Test {
 			+ "KTJJT 220\n"
 			+ "QQQJA 483" );
 
-	private static final String[] DATA = Input.linesFrom( "input_07.txt" );
+	private static final String[] DATA = Input.linesFrom( "y23", "input_07.txt" );
 
 	@Test
 	void part1Test() {
