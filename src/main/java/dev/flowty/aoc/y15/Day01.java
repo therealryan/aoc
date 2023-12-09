@@ -1,6 +1,6 @@
 package dev.flowty.aoc.y15;
 
-public class Day01 {
+class Day01 {
 
 	static int part1( String line ) {
 		int floor = 0;

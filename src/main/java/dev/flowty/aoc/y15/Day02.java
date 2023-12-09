@@ -3,7 +3,7 @@ package dev.flowty.aoc.y15;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class Day02 {
+class Day02 {
 
 	static int part1( String... line ) {
 		return Stream.of( line )

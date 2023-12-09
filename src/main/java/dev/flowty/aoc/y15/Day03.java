@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
-public class Day03 {
+class Day03 {
 
 	static int part1( String line ) {
 		return visited( 1, line );
