@@ -97,37 +97,26 @@ class Day10 {
 
 		int enclosedByLoop() {
 			int count = 0;
-			for( int i = 0; i < nodes.length; i++ ) {
-				for( int j = 0; j < nodes[i].length; j++ ) {
-					if( !nodes[i][j].isOnLoop() ) {
+			for( Node[] row : nodes ) {
+				EnumMap<Pipe, Integer> encountered = new EnumMap<>( Pipe.class );
 
-						// what sorts of loop pipes lie between the node and the top of the grid?
-						EnumMap<Pipe, Integer> encountered = new EnumMap<>( Pipe.class );
-						for( int k = 0; k < i; k++ ) {
-							if( nodes[k][j].isOnLoop() ) {
-								encountered.compute(
-										nodes[k][j].pipe(),
-										( p, v ) -> v == null
-												? 1
-												: v + 1 );
-							}
-						}
-
-						// how many of those would we have to cross?
-						int winding =
-								// Definitely horizontal pipes
-								encountered.getOrDefault( Pipe.EW, 0 )
-										// Balanced pairs of NE/SW
-										+ Math.min(
-												encountered.getOrDefault( Pipe.NE, 0 ),
-												encountered.getOrDefault( Pipe.WS, 0 ) )
-										// Balanced pairs of NW/ES
-										+ Math.min(
-												encountered.getOrDefault( Pipe.NW, 0 ),
-												encountered.getOrDefault( Pipe.ES, 0 ) );
+				for( Node node : row ) {
+					if( node.isOnLoop() ) {
+						encountered.compute(
+								node.pipe(),
+								( p, v ) -> v == null ? 1 : v + 1 );
+					}
+					else {
+						int winding = encountered.getOrDefault( Pipe.NS, 0 )
+								+ Math.min(
+										encountered.getOrDefault( Pipe.NE, 0 ),
+										encountered.getOrDefault( Pipe.SW, 0 ) )
+								+ Math.min(
+										encountered.getOrDefault( Pipe.NW, 0 ),
+										encountered.getOrDefault( Pipe.SE, 0 ) );
 
 						if( winding % 2 == 1 ) {
-							nodes[i][j].enclosed = true;
+							node.enclosed = true;
 							count++;
 						}
 					}
@@ -248,7 +237,7 @@ class Day10 {
 				}
 				if( east != null && east.isOnLoop() ) {
 					if( south.isOnLoop() ) {
-						return Pipe.ES;
+						return Pipe.SE;
 					}
 					if( west != null && west.isOnLoop() ) {
 						return Pipe.EW;
@@ -256,7 +245,7 @@ class Day10 {
 				}
 				if( south != null && south.isOnLoop() ) {
 					if( west != null && west.isOnLoop() ) {
-						return Pipe.WS;
+						return Pipe.SW;
 					}
 				}
 				throw new IllegalStateException( "???" );
@@ -293,8 +282,8 @@ class Day10 {
 		EW('-', '─', '═', false, true, false, true),
 		NE('L', '└', '╚', true, true, false, false),
 		NW('J', '┘', '╝', true, false, false, true),
-		WS('7', '┐', '╗', false, false, true, true),
-		ES('F', '┌', '╔', false, true, true, false),
+		SW('7', '┐', '╗', false, false, true, true),
+		SE('F', '┌', '╔', false, true, true, false),
 		G('.', '░', '░', false, false, false, false),
 		S('S', 'S', 'S', true, true, true, true);
 
