@@ -36,17 +36,33 @@ class Day19Test {
 
 	@Test
 	void part1() {
-		assertEquals( 0, Day19.part1( DATA ) );
+		assertEquals( 332145, Day19.part1( DATA ) );
 	}
 
 	@Test
 	void part2Test() {
-		assertEquals( 332145, Day19.part2( TEST_DATA ) );
+		assertEquals( 1, Day19.part2( Input.linesOf( ""
+				+ "in{x>1:R,m>1:R,a>1:R,s>1:R,A}\n"
+				+ "\n"
+				+ "{x=1,m=1,a=1,s=1}\n"
+				+ "{x=4000,m=4000,a=4000,s=4000}" ) ) );
+		assertEquals( 1, Day19.part2( Input.linesOf( ""
+				+ "in{x<4000:R,m<4000:R,a<4000:R,s<4000:R,A}\n"
+				+ "\n"
+				+ "{x=1,m=1,a=1,s=1}\n"
+				+ "{x=4000,m=4000,a=4000,s=4000}" ) ) );
+		assertEquals( 1, Day19.part2( Input.linesOf( ""
+				+ "in{x<4000:R,m<4000:R,a<4000:R,s>1:R,A}\n"
+				+ "\n"
+				+ "{x=1,m=1,a=1,s=1}\n"
+				+ "{x=4000,m=4000,a=4000,s=1}" ) ) );
+
+		assertEquals( 167409079868000L, Day19.part2( TEST_DATA ) );
 	}
 
 	@Test
 	void part2() {
-		assertEquals( 0, Day19.part2( DATA ) );
+		assertEquals( 136661579897555L, Day19.part2( DATA ) );
 	}
 
 }
