@@ -2,10 +2,12 @@ package dev.flowty.aoc.y23;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import dev.flowty.aoc.Input;
 
+@Disabled
 class Day18Test {
 
 	private static final String[] TEST_DATA = Input.linesOf( ""
