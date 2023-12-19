@@ -13,7 +13,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class Day17 {
+class Day17 {
 
 	static int part1( String[] lines ) {
 		City c = new City( lines );
