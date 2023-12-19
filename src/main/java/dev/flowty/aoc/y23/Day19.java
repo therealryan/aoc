@@ -110,7 +110,6 @@ class Day19 {
 			pipes.computeIfAbsent( input, k -> new ArrayList<>() ).add( pr );
 
 			while( !pipes.isEmpty() ) {
-				System.out.println( pipes );
 				Workflow flow = flows.get( pipes.firstKey() );
 				List<PartRange> ranges = pipes.remove( pipes.firstKey() );
 				for( PartRange range : ranges ) {
@@ -154,7 +153,6 @@ class Day19 {
 		}
 
 		Map<String, List<PartRange>> ranges( PartRange in ) {
-			System.out.println( "Day19.Workflow.ranges() " + in );
 			Map<String, List<PartRange>> out = new TreeMap<>();
 
 			PartRange rem = in;
@@ -213,7 +211,6 @@ class Day19 {
 				pr.min.values.put( property, value + 1 );
 			}
 
-			System.out.println( "  " + toString() + " pass()\n     in " + in + "\n    out " + pr );
 			return pr;
 		}
 
@@ -228,7 +225,6 @@ class Day19 {
 				pr.max.values.put( property, value );
 			}
 
-			System.out.println( "  " + toString() + " fail()\n     in " + in + "\n    out " + pr );
 			return pr;
 		}
 
