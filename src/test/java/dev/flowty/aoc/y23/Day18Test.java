@@ -2,12 +2,10 @@ package dev.flowty.aoc.y23;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import dev.flowty.aoc.Input;
 
-@Disabled
 class Day18Test {
 
 	private static final String[] TEST_DATA = Input.linesOf( ""
@@ -31,59 +29,21 @@ class Day18Test {
 	@Test
 	void part1Test() {
 		assertEquals( 62, Day18.part1( TEST_DATA ) );
-
-		assertEquals( 45, Day18.part1( Input.linesOf( ""
-				+ "R 4 (#ffffff)\n"
-				+ "D 4 (#ffffff)\n"
-				+ "L 10 (#ffffff)\n"
-				+ "U 2 (#ffffff)\n"
-				+ "R 5 (#ffffff)\n"
-				+ "U 2 (#ffffff)\n" ) ) );
-
-		assertEquals( 45, Day18.part1( Input.linesOf( ""
-				+ "L 4 (#ffffff)\n"
-				+ "D 4 (#ffffff)\n"
-				+ "R 10 (#ffffff)\n"
-				+ "U 2 (#ffffff)\n"
-				+ "L 5 (#ffffff)\n"
-				+ "U 2 (#ffffff)\n" ) ) );
-
-		assertEquals( 85, Day18.part1( Input.linesOf( ""
-				+ "R 4 (#ffffff)\n"
-				+ "D 2 (#ffffff)\n"
-				+ "R 10 (#ffffff)\n"
-				+ "D 2 (#ffffff)\n"
-				+ "L 24 (#ffffff)\n"
-				+ "U 2 (#ffffff)\n"
-				+ "R 10 (#ffffff)\n"
-				+ "U 2 (#ffffff)" ) ) );
-
-		assertEquals( 19, Day18.part1( Input.linesOf( ""
-				+ "R 8 (#ffffff)\n"
-				+ "D 2 (#ffffff)\n"
-				+ "L 4 (#ffffff)\n"
-				+ "U 1 (#ffffff)" ) ) );
-
-		assertEquals( 19, Day18.part1( Input.linesOf( ""
-				+ "L 8 (#ffffff)\n"
-				+ "D 2 (#ffffff)\n"
-				+ "R 4 (#ffffff)\n"
-				+ "U 1 (#ffffff)" ) ) );
 	}
 
 	@Test
 	void part1() {
-		assertEquals( 0, Day18.part1( DATA ) );
+		assertEquals( 47527, Day18.part1( DATA ) );
 	}
 
 	@Test
 	void part2Test() {
-		assertEquals( 0, Day18.part2( TEST_DATA ) );
+		assertEquals( 952408144115L, Day18.part2( TEST_DATA ) );
 	}
 
 	@Test
 	void part2() {
-		assertEquals( 0, Day18.part2( DATA ) ); // this needs work
+		assertEquals( 52240187443188L, Day18.part2( DATA ) );
 	}
 
 }

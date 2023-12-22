@@ -54,6 +54,10 @@ class Day17Test {
 	@Test
 	@Disabled("not correct yet!")
 	void part2() {
+
+		// simplify the recursion:
+		// nodes store cost, direction and blocks since the last turn
+		// *always* turn at each recursion, then recurse on the move of min to max steps
 		assertEquals( 0, Day17.part2( DATA ) ); // this needs work
 	}
 

@@ -64,5 +64,4 @@ class Day19Test {
 	void part2() {
 		assertEquals( 136661579897555L, Day19.part2( DATA ) );
 	}
-
 }
