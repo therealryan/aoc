@@ -43,7 +43,7 @@ class Day18Test {
 
 	@Test
 	void part2() {
-		assertEquals( 52240187443188L, Day18.part2( DATA ) );
+		assertEquals( 52240187443190L, Day18.part2( DATA ) );
 	}
 
 }

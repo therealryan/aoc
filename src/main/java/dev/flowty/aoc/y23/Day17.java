@@ -3,14 +3,15 @@ package dev.flowty.aoc.y23;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 class Day17 {
@@ -52,23 +53,20 @@ class Day17 {
 
 			while( !pending.isEmpty() ) {
 				Step s = pending.remove();
-				Set<Direction> next = s.current.offer( minRun, maxRun, s );
-				for( Direction dir : next ) {
-					int minMove = 1;
-					if( dir != s.direction ) {
-						minMove = minRun;
-					}
+				Set<Vector> next = s.current.offer( minRun, maxRun, s );
+				for( Vector vec : next ) {
+
 					Loc loc = new Loc(
-							s.current.location.row + dir.ri * minMove,
-							s.current.location.col + dir.ci * minMove );
+							s.current.location.row + vec.direction.ri * vec.steps,
+							s.current.location.col + vec.direction.ci * vec.steps );
 					Step ns = s;
 					if( inBounds( loc ) ) {
-						for( int i = 1; i <= minMove; i++ ) {
+						for( int i = 1; i <= vec.steps; i++ ) {
 							loc = new Loc(
-									s.current.location.row + dir.ri * i,
-									s.current.location.col + dir.ci * i );
+									s.current.location.row + vec.direction.ri * i,
+									s.current.location.col + vec.direction.ci * i );
 							Block n = blocks[loc.row][loc.col];
-							ns = new Step( ns, dir, n, ns.cumulativeLoss + n.loss );
+							ns = new Step( ns, vec, n, ns.cumulativeLoss + n.loss );
 						}
 						pending.add( ns );
 					}
@@ -76,8 +74,6 @@ class Day17 {
 			}
 
 			Step s = end.minLossPath();
-//			System.out.println( "\n routes for\n" + toString() );
-//			System.out.println( "\n" + draw( s ) + " cost " + s.cumulativeLoss );
 			return s.cumulativeLoss;
 		}
 
@@ -105,8 +101,8 @@ class Day17 {
 
 			Step s = step;
 			while( s != null ) {
-				if( s.direction != null ) {
-					canvas[s.current.location.row][s.current.location.col] = s.direction.display;
+				if( s.vector != null ) {
+					canvas[s.current.location.row][s.current.location.col] = s.vector.direction.display;
 				}
 				s = s.previous;
 			}
@@ -121,8 +117,8 @@ class Day17 {
 		final Loc location;
 		final int loss;
 
-		// maps from a direction to the lowest-cost route to here that can continue in
-		// that direction
+		// maps from a direction/distance to the lowest-cost route to here that took
+		// arrived via that vector
 		final Map<Vector, Step> minimal = new HashMap<>();
 
 		Block( Loc location, int loss ) {
@@ -130,19 +126,26 @@ class Day17 {
 			this.loss = loss;
 		}
 
-		Set<Direction> offer( int minRun, int maxRun, Step step ) {
-			Set<Direction> next = step.direction != null
-					? step.direction.next( minRun, maxRun, step )
-					: EnumSet.allOf( Direction.class );
-			Set<Direction> toExplore = EnumSet.noneOf( Direction.class );
+		Set<Vector> offer( int minRun, int maxRun, Step step ) {
 
+			Step min = minimal.compute(
+					step.vector,
+					( k, e ) -> e == null || step.cumulativeLoss < e.cumulativeLoss
+							? step
+							: e );
+
+			if( min != step ) {
+				return Collections.emptySet();
+			}
+
+			Set<Direction> next = step.vector != null
+					? step.vector.direction.next()
+					: EnumSet.allOf( Direction.class );
+
+			Set<Vector> toExplore = new TreeSet<>();
 			for( Direction dir : next ) {
-				for( Vector vec : step.possibles( dir, maxRun ) ) {
-					if( minimal.get( vec ) == null
-							|| minimal.get( vec ).cumulativeLoss > step.cumulativeLoss ) {
-						minimal.put( vec, step );
-						toExplore.add( dir );
-					}
+				for( int i = minRun; i <= maxRun; i++ ) {
+					toExplore.add( new Vector( dir, i ) );
 				}
 			}
 
@@ -162,97 +165,43 @@ class Day17 {
 		}
 	}
 
-	record Step(Step previous, Direction direction, Block current, int cumulativeLoss) {
-		int tailLength( Direction dir ) {
-			int sameCount = 0;
-			Step s = this;
-			while( s != null && s.direction == dir ) {
-				sameCount++;
-				s = s.previous;
-			}
-			return sameCount;
-		}
-
-		Set<Vector> possibles( Direction dir, int limit ) {
-			int seq = tailLength( dir );
-			Set<Vector> v = new HashSet<>();
-			for( int i = 1; i <= limit - seq; i++ ) {
-				v.add( new Vector( dir, i ) );
-			}
-			return v;
-		}
+	record Step(Step previous, Vector vector, Block current, int cumulativeLoss) {
 	}
 
-	record Vector(Direction direction, int steps) {
+	record Vector(Direction direction, int steps) implements Comparable<Vector> {
+		@Override
+		public int compareTo( Vector o ) {
+			int d = direction.ordinal() - o.direction.ordinal();
+			if( d == 0 ) {
+				d = steps - o.steps;
+			}
+			return d;
+		}
 	}
 
 	private enum Direction {
 		N('↑', -1, 0) {
 			@Override
-			Set<Direction> next( int min, int max, Step last ) {
-				Set<Direction> p = EnumSet.noneOf( Direction.class );
-				int seq = last.tailLength( this );
-
-				if( seq >= min ) {
-					p.add( E );
-					p.add( W );
-				}
-				if( seq < max ) {
-					p.add( this );
-				}
-
-				return p;
+			Set<Direction> next() {
+				return EnumSet.of( E, W );
 			}
 		},
 		E('→', 0, 1) {
 			@Override
-			Set<Direction> next( int min, int max, Step last ) {
-				Set<Direction> p = EnumSet.noneOf( Direction.class );
-				int seq = last.tailLength( this );
-
-				if( seq >= min ) {
-					p.add( N );
-					p.add( S );
-				}
-				if( seq < max ) {
-					p.add( this );
-				}
-
-				return p;
+			Set<Direction> next() {
+				return EnumSet.of( N, S );
 			}
 		},
 		S('↓', 1, 0) {
 			@Override
-			Set<Direction> next( int min, int max, Step last ) {
-				Set<Direction> p = EnumSet.noneOf( Direction.class );
-				int seq = last.tailLength( this );
-
-				if( seq >= min ) {
-					p.add( E );
-					p.add( W );
-				}
-				if( seq < max ) {
-					p.add( this );
-				}
-
-				return p;
+			Set<Direction> next() {
+				return EnumSet.of( E, W );
 			}
 		},
 		W('←', 0, -1) {
 			@Override
-			Set<Direction> next( int min, int max, Step last ) {
-				Set<Direction> p = EnumSet.noneOf( Direction.class );
-				int seq = last.tailLength( this );
-
-				if( seq >= min ) {
-					p.add( N );
-					p.add( S );
-				}
-				if( seq < max ) {
-					p.add( this );
-				}
-
-				return p;
+			Set<Direction> next() {
+				return EnumSet.of( N, S );
 			}
 		};
 
@@ -266,6 +215,6 @@ class Day17 {
 			this.ci = ci;
 		}
 
-		abstract Set<Direction> next( int min, int max, Step last );
+		abstract Set<Direction> next();
 	}
 }

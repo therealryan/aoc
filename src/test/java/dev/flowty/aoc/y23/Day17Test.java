@@ -2,7 +2,6 @@ package dev.flowty.aoc.y23;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import dev.flowty.aoc.Input;
@@ -52,13 +51,8 @@ class Day17Test {
 	}
 
 	@Test
-	@Disabled("not correct yet!")
 	void part2() {
-
-		// simplify the recursion:
-		// nodes store cost, direction and blocks since the last turn
-		// *always* turn at each recursion, then recurse on the move of min to max steps
-		assertEquals( 0, Day17.part2( DATA ) ); // this needs work
+		assertEquals( 900, Day17.part2( DATA ) ); // this needs work
 	}
 
 	private static int diffCost( String city, String path ) {

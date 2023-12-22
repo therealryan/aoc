@@ -1,7 +1,5 @@
 package dev.flowty.aoc.y23;
 
-import static java.util.stream.Collectors.joining;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,9 +17,6 @@ class Day18 {
 	static long part2( String[] lines ) {
 		return new Lagoon( lines, true )
 				.enclosedArea();
-	}
-
-	record Loc(int row, int column) {
 	}
 
 	static class Lagoon {
@@ -46,23 +41,10 @@ class Day18 {
 		}
 
 		long enclosedArea() {
+			// we don't know which edge is the outside, but we know it'll be bigger!
 			return Math.max(
 					area( leftCorners ),
 					area( rightCorners ) );
-		}
-
-		@Override
-		public String toString() {
-			return String.format( "%s\nleft\n  %s\nright\n  %s",
-					trenches.stream()
-							.map( Trench::toString )
-							.collect( joining( "\n" ) ),
-					leftCorners.stream()
-							.map( Point::toString )
-							.collect( joining( "\n  " ) ),
-					rightCorners.stream()
-							.map( Point::toString )
-							.collect( joining( "\n  " ) ) );
 		}
 	}
 
@@ -92,15 +74,6 @@ class Day18 {
 				colour = m.group( 3 );
 			}
 		}
-
-		@Override
-		public String toString() {
-			return String.format( "%s to %s %s (#%s)",
-					origin,
-					origin.add( direction.vector.scale( length ) ),
-					length,
-					colour );
-		}
 	}
 
 	static Point corner( Trench a, Trench b,
@@ -124,6 +97,7 @@ class Day18 {
 		Iterator<Point> points = shape.iterator();
 		Point o = points.next();
 		Point p = points.next();
+
 		double area = 0;
 		while( points.hasNext() ) {
 			Point c = points.next();
@@ -134,11 +108,21 @@ class Day18 {
 	}
 
 	static double area( Point a, Point b, Point c ) {
-		double ab = a.distance( b );
-		double bc = b.distance( c );
-		double ca = c.distance( a );
-		double s = (ab + bc + ca) / 2;
-		return Math.sqrt( s * (s - ab) * (s - bc) * (s - ca) );
+		double h;
+		double w;
+		if( b.x == c.x ) {
+			h = Math.abs( a.x - b.x );
+			w = Math.abs( b.y - c.y );
+		}
+		else if( b.y == c.y ) {
+			h = Math.abs( a.y - b.y );
+			w = Math.abs( b.x - c.x );
+		}
+		else {
+			throw new IllegalArgumentException();
+		}
+
+		return h * w / 2;
 	}
 
 	record Point(double x, double y) {
