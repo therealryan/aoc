@@ -40,7 +40,7 @@ class Day20 {
 				.map( m -> (FlipFlop) m )
 				.collect( toSet() );
 
-		flipFlops.stream().sorted( Module.NAME_ORDER ).forEach( f -> System.out.println( f ) );
+//		flipFlops.stream().sorted( Module.NAME_ORDER ).forEach( f -> System.out.println( f ) );
 
 		Map<FlipFlop, Level> previous = new HashMap<>();
 		Map<FlipFlop, List<Integer>> flipIndices = new HashMap<>();
@@ -64,11 +64,11 @@ class Day20 {
 		// TODO: monitor the state all the time, not just after the button push has
 		// settled
 
-		flipIndices.forEach( ( ff, fi ) -> {
-			System.out.println( ff );
-			System.out.println(
-					fi.get( fi.size() - 1 ) + "\t\t\t" + Integer.bitCount( fi.get( fi.size() - 1 ) ) );
-		} );
+//		flipIndices.forEach( ( ff, fi ) -> {
+//			System.out.println( ff );
+//			System.out.println(
+//					fi.get( fi.size() - 1 ) + "\t\t\t" + Integer.bitCount( fi.get( fi.size() - 1 ) ) );
+//		} );
 
 		return 0;
 	}
