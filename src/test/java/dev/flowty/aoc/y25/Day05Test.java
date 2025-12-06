@@ -39,6 +39,6 @@ class Day05Test {
 
   @Test
   void part2() {
-    assertEquals(336790092076620l, Day05.part2(DATA));
+    assertEquals(336790092076620L, Day05.part2(DATA));
   }
 }
