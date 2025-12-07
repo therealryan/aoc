@@ -14,28 +14,20 @@ import static java.util.stream.Collectors.toCollection;
 public class Day05 {
 
   static long part1(String... lines) {
-    List<String> rangeDefs = new ArrayList<>();
-    List<Long> ids = null;
-
-    for (String line : lines) {
-      if (line.isEmpty()) {
-        ids = new ArrayList<>();
-      } else {
-        if (ids == null) {
-          rangeDefs.add(line);
-        } else {
-          ids.add(Long.parseLong(line));
-        }
-      }
-    }
-
-    Ranges ranges = new Ranges(rangeDefs);
-    return ids.stream()
+    InputData inputData = parse(lines);
+    Ranges ranges = new Ranges(inputData.ranges());
+    return inputData.ids().stream()
       .filter(ranges::contains)
       .count();
   }
 
   static long part2(String... lines) {
+    InputData inputData = parse(lines);
+    Ranges ranges = new Ranges(inputData.ranges());
+    return ranges.span();
+  }
+
+  private static InputData parse(String[] lines) {
     List<String> rangeDefs = new ArrayList<>();
     List<Long> ids = null;
 
@@ -50,9 +42,11 @@ public class Day05 {
         }
       }
     }
+    InputData inputData = new InputData(rangeDefs, ids);
+    return inputData;
+  }
 
-    Ranges ranges = new Ranges(rangeDefs);
-    return ranges.size();
+  private record InputData(List<String> ranges, List<Long> ids) {
   }
 
   private static class Ranges {
@@ -84,12 +78,12 @@ public class Day05 {
       return Stream.of(ranges).anyMatch(r -> r.contains(value));
     }
 
-    long size(){
-      return Stream.of(ranges).mapToLong(Range::size).sum();
+    long span() {
+      return Stream.of(ranges).mapToLong(Range::span).sum();
     }
   }
 
-  private static record Range(long low, long high) {
+  private record Range(long low, long high) {
     static Comparator<Range> ORDER = Comparator
       .comparing(Range::low)
       .thenComparing(Range::high);
@@ -117,7 +111,7 @@ public class Day05 {
       return new Range(Math.min(low, other.low), Math.max(high, other.high));
     }
 
-    long size() {
+    long span() {
       return high - low + 1;
     }
   }

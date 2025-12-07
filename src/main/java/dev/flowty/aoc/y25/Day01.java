@@ -47,7 +47,7 @@ class Day01 {
       int count = Integer.parseInt(m.group(2));
 
       for (int i = 0; i < count; i++) {
-        position += (left ? -1 : 1) * 1;
+        position += left ? -1 : 1;
         while (position < 0) {
           position += 100;
         }
