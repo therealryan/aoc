@@ -1,4 +1,4 @@
-package dev.flowty.aoc.y25;
+package dev.flowty.aoc;
 
 public class Template {
 

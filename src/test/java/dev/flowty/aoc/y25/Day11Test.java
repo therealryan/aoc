@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Day11Test {
 
-  public static final String[] TEST_DATA = Input.linesOf(
+  public static final String[] PART_1_TEST_DATA = Input.linesOf(
     "aaa: you hhh\n" +
       "you: bbb ccc\n" +
       "bbb: ddd eee\n" +
@@ -23,7 +23,7 @@ class Day11Test {
 
   @Test
   void part1Test() {
-    assertEquals(5, Day11.part1(TEST_DATA));
+    assertEquals(5, Day11.part1(PART_1_TEST_DATA));
   }
 
   @Test
@@ -31,13 +31,28 @@ class Day11Test {
     assertEquals(788, Day11.part1(DATA));
   }
 
+  public static final String[] PART_2_TEST_DATA = Input.linesOf(
+    "svr: aaa bbb\n" +
+      "aaa: fft\n" +
+      "fft: ccc\n" +
+      "bbb: tty\n" +
+      "tty: ccc\n" +
+      "ccc: ddd eee\n" +
+      "ddd: hub\n" +
+      "hub: fff\n" +
+      "eee: dac\n" +
+      "dac: fff\n" +
+      "fff: ggg hhh\n" +
+      "ggg: out\n" +
+      "hhh: out");
+
   @Test
   void part2Test() {
-    assertEquals(0, Day11.part2(TEST_DATA));
+    assertEquals(2, Day11.part2(PART_2_TEST_DATA));
   }
 
   @Test
   void part2() {
-    assertEquals(0, Day11.part2(DATA));
+    assertEquals(316291887968000L, Day11.part2(DATA));
   }
 }
